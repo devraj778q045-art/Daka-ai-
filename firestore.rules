@@ -1,0 +1,117 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default deny everything
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Connection test document rule for boot check
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // User Profile Entity Validation
+    function isValidUserProfile(data, userId) {
+      return data.userId == userId &&
+        data.email is string && data.email.size() <= 256 &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+        (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() <= 50)) &&
+        (!('language' in data) || data.language in ['auto', 'hi', 'en']) &&
+        (!('theme' in data) || data.theme in ['futuristic-dark', 'deep-navy', 'amoled-black', 'light']) &&
+        (!('ttsEnabled' in data) || data.ttsEnabled is bool) &&
+        (!('speechRate' in data) || (data.speechRate is number && data.speechRate >= 0.5 && data.speechRate <= 2.5));
+    }
+
+    // Chat Session Entity Validation
+    function isValidChatSession(data, userId) {
+      return data.userId == userId &&
+        data.id is string && data.id.size() <= 128 &&
+        data.title is string && data.title.size() <= 200 &&
+        data.createdAt is number &&
+        data.updatedAt is number;
+    }
+
+    // Chat Message Entity Validation
+    function isValidChatMessage(data, userId) {
+      return data.userId == userId &&
+        data.id is string && data.id.size() <= 128 &&
+        data.sessionId is string && data.sessionId.size() <= 128 &&
+        data.role in ['user', 'model'] &&
+        data.content is string && data.content.size() <= 50000 &&
+        data.timestamp is number;
+    }
+
+    // /users/{userId} collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming(), userId) &&
+        incoming().userId == existing().userId;
+
+      allow delete: if isOwner(userId);
+
+      // Subcollection: Chat Sessions
+      match /sessions/{sessionId} {
+        allow get, list: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+          isValidId(sessionId) &&
+          isValidChatSession(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+          isValidId(sessionId) &&
+          isValidChatSession(incoming(), userId) &&
+          incoming().userId == existing().userId;
+
+        allow delete: if isOwner(userId);
+
+        // Subcollection: Chat Messages
+        match /messages/{messageId} {
+          allow get, list: if isOwner(userId);
+
+          allow create: if isOwner(userId) &&
+            isValidId(messageId) &&
+            isValidChatMessage(incoming(), userId);
+
+          allow update: if isOwner(userId) &&
+            isValidId(messageId) &&
+            isValidChatMessage(incoming(), userId) &&
+            incoming().userId == existing().userId;
+
+          allow delete: if isOwner(userId);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow512" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0b223d" />
+      <stop offset="60%" stop-color="#091424" />
+      <stop offset="100%" stop-color="#080c14" />
+    </radialGradient>
+    <radialGradient id="orbGlow512" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#7df9ff" />
+      <stop offset="35%" stop-color="#00f0ff" />
+      <stop offset="70%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </radialGradient>
+    <linearGradient id="ringGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <filter id="neonBlur512" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGlow512)" />
+  <rect width="508" height="508" x="2" y="2" rx="110" fill="none" stroke="#00f0ff" stroke-width="3" stroke-opacity="0.35" />
+
+  <!-- Orbit Rings -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#ringGrad512)" stroke-width="5" stroke-dasharray="18 14" opacity="0.7" />
+  <circle cx="256" cy="256" r="215" fill="none" stroke="#00f0ff" stroke-width="2" stroke-dasharray="6 18" opacity="0.4" />
+
+  <!-- Glowing Orb Core -->
+  <circle cx="256" cy="256" r="120" fill="url(#orbGlow512)" filter="url(#neonBlur512)" />
+
+  <!-- Central Hex Shield & Core -->
+  <path d="M 216 200 L 256 168 L 296 200 L 296 312 L 256 344 L 216 312 Z" fill="none" stroke="#ffffff" stroke-width="8" stroke-linejoin="round" opacity="0.95" />
+  <circle cx="256" cy="256" r="18" fill="#ffffff" />
+</svg>

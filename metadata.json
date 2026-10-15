@@ -1,0 +1,6 @@
+{
+  "name": "DEKA AI - Futuristic Android AI Assistant",
+  "description": "Modern Android AI assistant with animated glowing orb, ChatGPT-like conversational chat, Hindi and English voice interaction, app intent launching, and document analysis.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

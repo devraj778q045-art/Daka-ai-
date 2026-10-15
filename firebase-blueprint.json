@@ -1,0 +1,146 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with personalized assistant settings and preferences",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Unique Firebase Authentication UID of the user",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "format": "email",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user",
+          "maxLength": 100
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "User mobile phone number",
+          "maxLength": 50
+        },
+        "language": {
+          "type": "string",
+          "description": "Assistant language preference (auto, hi, en)",
+          "enum": ["auto", "hi", "en"]
+        },
+        "theme": {
+          "type": "string",
+          "description": "UI Theme preference",
+          "enum": ["futuristic-dark", "deep-navy", "amoled-black", "light"]
+        },
+        "ttsEnabled": {
+          "type": "boolean",
+          "description": "Whether voice spoken output is enabled"
+        },
+        "speechRate": {
+          "type": "number",
+          "description": "Speed rate for text to speech playback"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Profile last updated timestamp"
+        }
+      },
+      "required": ["userId", "email", "createdAt"]
+    },
+    "ChatSession": {
+      "title": "ChatSession",
+      "description": "Conversational session with DEKA AI",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique chat session identifier",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of conversation",
+          "maxLength": 200
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp when session was created"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp when session was last updated"
+        }
+      },
+      "required": ["id", "userId", "title", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Single message inside a conversation session",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique message identifier",
+          "maxLength": 128
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Parent session ID",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Author user ID",
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of speaker",
+          "enum": ["user", "model"]
+        },
+        "content": {
+          "type": "string",
+          "description": "Text content of the message",
+          "maxLength": 50000
+        },
+        "timestamp": {
+          "type": "number",
+          "description": "Message creation timestamp"
+        },
+        "detectedIntent": {
+          "type": "string",
+          "description": "Detected Android intent action if any",
+          "maxLength": 100
+        }
+      },
+      "required": ["id", "sessionId", "userId", "role", "content", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Stores private user account profile and personalized assistant settings"
+    },
+    "/users/{userId}/sessions/{sessionId}": {
+      "schema": "ChatSession",
+      "description": "Stores user chat sessions for cross-device synchronization"
+    },
+    "/users/{userId}/sessions/{sessionId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Stores messages within a user chat session"
+    }
+  }
+}

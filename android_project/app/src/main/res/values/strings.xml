@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DEKA AI</string>
+    <string name="assistant_title">DEKA AI Assistant</string>
+    <string name="wake_word">Hey Deka</string>
+    <string name="welcome_message">Hello! I am DEKA AI. How can I assist you today?</string>
+    <string name="welcome_message_hi">नमस्ते! मैं DEKA AI हूँ। मैं आज आपकी क्या सहायता कर सकता हूँ?</string>
+</resources>
